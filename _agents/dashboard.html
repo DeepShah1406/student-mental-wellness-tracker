@@ -28,6 +28,27 @@
     <div class="col-6 col-md-3"><div class="glass p-3"><div class="text-secondary small">SHIP DECISION</div><div class="h4 mb-0"><span id="ship" class="badge text-bg-secondary">pending</span></div></div></div>
     <div class="col-6 col-md-3"><div class="glass p-3"><div class="text-secondary small">LIVE DEMO</div><a id="demo" class="btn btn-sm btn-outline-info disabled mt-1" target="_blank">not yet</a></div></div>
   </div>
+  
+  <!-- Tournament AI Codebase Evaluator Card -->
+  <div class="row g-3 mb-4">
+    <div class="col-12">
+      <div class="glass p-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom border-secondary-subtle pb-3 mb-3 gap-2">
+          <div>
+            <h5 class="mb-1 text-info"><i class="bi bi-robot"></i> Tournament AI Codebase Evaluator</h5>
+            <div class="text-secondary small">Real-time static code analyzer comparing build against Version 0.0.2 baseline.</div>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge text-bg-secondary">v0.0.2 Baseline: <span id="baseScore">93.59</span></span>
+            <span class="badge text-bg-info">Current Build: <span id="currentScore">0.00</span></span>
+            <span class="badge" id="scoreDiff">--</span>
+          </div>
+        </div>
+        <div class="row g-3" id="scoresGrid"></div>
+      </div>
+    </div>
+  </div>
+
   <h6 class="text-secondary text-uppercase small mb-2">The AI team</h6>
   <div class="row g-3 mb-4" id="agents"></div>
   <div class="row g-3">
@@ -50,6 +71,47 @@ async function tick(){
   bugs.textContent=s.critical_bugs??0; bugs.className="badge text-bg-"+((s.critical_bugs??0)>0?"danger":"success");
   ship.textContent=s.ship_decision||"pending"; ship.className="badge text-bg-"+({ship:"success",iterating:"warning",pending:"secondary"}[s.ship_decision]||"secondary");
   if(s.demo_url){demo.href=s.demo_url;demo.textContent="Open demo ↗";demo.classList.remove("disabled");}
+  
+  // Render codebase evaluation scores
+  if (s.baseline_score && s.current_score) {
+    let bs = s.baseline_score;
+    let cs = s.current_score;
+    baseScore.textContent = bs.overall;
+    currentScore.textContent = cs.overall;
+    let d = parseFloat((cs.overall - bs.overall).toFixed(2));
+    scoreDiff.textContent = d >= 0 ? "+" + d + " Better!" : d;
+    scoreDiff.className = "badge text-bg-" + (d >= 0 ? "success" : "danger");
+    
+    const labels = {
+      code_quality: "Code Quality",
+      security: "Security",
+      efficiency: "Efficiency",
+      testing: "Testing",
+      accessibility: "Accessibility",
+      problem_alignment: "Problem Alignment"
+    };
+    
+    scoresGrid.innerHTML = Object.entries(labels).map(([key, label]) => {
+      let baseVal = bs[key] || 0;
+      let curVal = cs[key] || 0;
+      let diffVal = curVal - baseVal;
+      let diffText = diffVal > 0 ? " (+" + diffVal + ")" : diffVal < 0 ? " (" + diffVal + ")" : "";
+      let pct = curVal;
+      return `<div class="col-md-6 col-lg-4">
+        <div class="p-3 bg-dark bg-opacity-25 border border-secondary-subtle rounded-3">
+          <div class="d-flex justify-content-between text-xs mb-1" style="font-size: 11px;">
+            <span class="fw-bold text-light">${label}</span>
+            <span class="text-secondary">v0.0.2: ${baseVal} · <strong class="text-info">${curVal}</strong><span class="text-success">${diffText}</span></span>
+          </div>
+          <div class="progress" style="height:.4rem; position:relative; overflow:visible;">
+            <div class="bg-secondary" style="position:absolute; top:-4px; bottom:-4px; left:${baseVal}%; width:2.5px; z-index:2; box-shadow: 0 0 4px #000;" title="v0.0.2 Baseline: ${baseVal}"></div>
+            <div class="progress-bar bg-info" style="width:${pct}%"></div>
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
   agents.innerHTML=(s.agents||[]).map(g=>{let[c,ic]=ST[g.status]||ST.idle;return '<div class="col-6 col-md-4 col-xl-3"><div class="glass p-3 h-100 '+(g.status=="working"?"agent-working":"")+'"><div class="d-flex justify-content-between align-items-center"><strong>'+esc(g.name)+'</strong><span class="badge text-bg-'+c+'"><i class="bi '+ic+'"></i> '+esc(g.status)+'</span></div><div class="small text-secondary mt-2">'+(esc(g.task)||"&nbsp;")+'</div><div class="small text-secondary mt-2">'+rel(g.updated_at)+'</div></div></div>';}).join("");
   feed.innerHTML=(s.activity||[]).slice(0,40).map(e=>'<div class="border-bottom border-secondary-subtle py-1 small"><span class="badge text-bg-dark me-1">'+esc(e.agent)+'</span>'+esc(e.msg)+' <span class="text-secondary">· '+rel(e.ts)+'</span></div>').join("");
   commits.innerHTML=(s.commits||[]).slice(0,20).map(c=>'<div class="py-1 small"><span class="text-info">'+esc(c.sha)+'</span> '+esc(c.msg)+' <span class="text-secondary">· '+rel(c.ts)+'</span></div>').join("");
