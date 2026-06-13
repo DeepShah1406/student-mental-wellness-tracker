@@ -1,83 +1,58 @@
-# MindGuard | GenAI Student Mental Wellness Tracker
+# 🛡️ MindGuard
+### A GenAI mental wellness companion and exam stress trigger tracker built for student aspirants.
 
-MindGuard is an AI-powered digital companion and mental wellness tracker designed specifically for students preparing for high-stakes board exams and competitive entrance tests (such as NEET, JEE, CUET, GATE, and UPSC). 
-
-By analyzing daily mood choices and open-ended journaling, MindGuard extracts subconscious stress triggers (like mock test performance, subject difficulties, or parental pressure) that standard trackers miss. It provides empathetic, context-aware coping strategies grounded in clinical frameworks while incorporating strict safety boundaries and crisis bypass protocols.
-
----
-
-## 🌟 Key Features
-*   **Low-Friction Mood & Journal Logging:** Quickly record emotions with emoji selections and write freely about prep schedules.
-*   **GenAI Trigger & Sentiment Extraction:** Processes journal text using the Groq API (Llama 3.3) to isolate specific anxiety sources.
-*   **Empathetic AI Companion:** A guarded chat companion strictly bounded to study-related stress, declining out-of-scope curriculum questions.
-*   **Safety & Crisis Bypass:** Real-time pre-checks intercept critical keywords (e.g. self-harm, suicidal ideation) to immediately present a National Helpline card (Kiran, AASRA) while disabling standard LLM lookup.
-*   **Student Analytics Dashboard:** Visualizes 7-day mood scores via interactive Recharts line graphs and displays a stress trigger frequency cloud.
-*   **Offline Robustness:** Automatic fallback to local database files (`local_db_logs.json` and `local_db_chats.json`) and heuristic mock models if database or API connections are unavailable.
+![Built at PromptWars 2026](https://img.shields.io/badge/Built%20at-PromptWars%202026-teal?style=flat-square)
+![Next.js](https://img.shields.io/badge/Framework-Next.js-black?style=flat-square)
+![Supabase](https://img.shields.io/badge/Database-Supabase-green?style=flat-square)
+![Deployed on Vercel](https://img.shields.io/badge/Deployment-Vercel-black?style=flat-square)
 
 ---
 
-## 🛠️ Technology Stack
-*   **Frontend & Routing:** Next.js (TypeScript, App Router)
-*   **Styling & Components:** Tailwind CSS v4, custom glassmorphic layout
-*   **Database & Storage:** Supabase (PostgreSQL)
-*   **LLM Inference:** Groq API (Model: `llama-3.3-70b-versatile`)
-*   **Deployment:** Vercel
+## 📷 Screenshots (Recommended Capture)
+1. **Wellness Dashboard**: The mood trend line chart, trigger tag clouds, and the interactive monthly **Calendar Mood Tracker**.
+2. **Daily Journal**: Free-form journaling panel, mood emoji selections, and the celebratory **canvas confetti burst** on successful submission.
+3. **AI Companion**: The chat interface showing CBT stress coping advice, homework rejection guards, and the prominent red **National Crisis Helpline Card**.
+4. **Relax Center**: Side-by-side circular **Pomodoro timer** and the interactive canvas **Zen Bubble Popper** game.
 
 ---
 
-## 🚀 Getting Started
-
-### 1. Prerequisites
-Make sure you have **Node.js 18+** installed.
-
-### 2. Installation
-1. Clone this repository to your local machine:
-   ```bash
-   git clone https://github.com/<your-username>/student-mental-wellness-tracker.git
-   cd student-mental-wellness-tracker
-   ```
-2. Install npm dependencies:
-   ```bash
-   npm install
-   ```
-
-### 3. Database Setup (Supabase)
-1. Create a free project on [Supabase](https://supabase.com).
-2. Open the **SQL Editor** in your Supabase dashboard.
-3. Copy the contents of the `schema.sql` file in this repository and paste them into the SQL editor, then click **Run**. This will create the required `daily_logs` and `chat_history` tables and configure RLS policies.
-
-### 4. Configuration
-1. Rename `.env.example` to `.env`.
-2. Populate the environment variables with your API keys:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-   GROQ_API_KEY=gsk_your_groq_key
-   ```
-
-### 5. Running the App
-Start the development server:
+## 🚀 Quick Start
+Run these three commands to spin up the project locally:
 ```bash
+git clone https://github.com/DeepShah1406/student-mental-wellness-tracker.git
+npm install
 npm run dev
 ```
-Open **[http://localhost:3000](http://localhost:3000)** in your browser to view the application.
+*Note: Make sure to copy `.env.example` to `.env` and fill in your Supabase & Groq API credentials.*
 
 ---
 
-## 📦 Deployment to Vercel
-
-1. Install the Vercel CLI globally (optional):
-   ```bash
-   npm install -g vercel
-   ```
-2. Run the deployment command in the project root:
-   ```bash
-   vercel
-   ```
-3. Add the environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `GROQ_API_KEY`) in the Vercel Project Settings under **Environment Variables**.
-4. Redeploy to apply variables.
+## 🌟 Features
+* 🧘‍♀️ **Relax Center**: Customizable Pomodoro Focus Timer and canvas-based Zen Bubble Popper game with synthesized audio alerts.
+* 📅 **Mood Calendar**: Visual monthly check-in grid displaying color-coded emotional states and journal summaries.
+* 🛡️ **PII Scrubbing**: Local regex sanitization that scrubs emails, phone numbers, and full names before sending logs to LLMs.
+* 🚨 **Crisis Bypass**: Pre-checks that block LLMs and display Indian National Helpline cards (Kiran/Tele-MANAS) instantly when crisis keywords are detected.
+* 💬 **Empathetic Companion**: Conversational wellness bot grounded in WHO frameworks (rejects coding/homework requests).
+* 📰 **Wellness Blogs**: Dedicated space containing wellness articles tailored for student exam stress management.
+* 🎨 **Light/Dark Toggle**: Switcher changing layouts from slate-teal dark mode to mint-green light mode.
+* 📦 **Offline Fallback Cache**: Automatic fallback to local cache JSON files if database connection fails.
 
 ---
 
-## 📄 License & Attributions
-*   Structured stress management guidelines and coping techniques adapted from the **World Health Organization (WHO)** and **Ministry of Health and Family Welfare (MoHFW), Government of India**.
+## 🛠️ Tech Stack & Justifications
+* **Next.js 16 (App Router)**: Enables sub-second loading speeds, clean layout structures, and serverless API endpoints.
+* **Supabase (PostgreSQL)**: Handles relational session databases, configured with robust Row-Level Security (RLS) policies.
+* **Groq (Llama 3.3 70B)**: Unlocks sub-second response latency for trigger parsing and conversation.
+* **Tailwind CSS v4**: Dynamic glassmorphic theme styling mapping variables for seamless light/dark swaps.
+
+---
+
+## 🤖 Built By
+MindGuard was designed and shipped collaboratively by the **AI Agent Team**:
+* **Orchestrator**: Directed workspace setups, acceptance checks, and port allocations.
+* **Research**: Analyzed competitor platforms (Wysa, Calm, Headspace) and local Indian helpline integrations.
+* **Architect**: Defined relational DB schemas, Next.js folder routing layouts, and API boundaries.
+* **Backend**: Completed serverless routes, crisis bypass algorithms, and JSON data fail-safes.
+* **Frontend**: Designed the glassmorphic Teal/Cyan user interfaces, theme toggle, and canvas physics.
+* **QA**: Wrote comprehensive validation test suites and checked the 10 acceptance criteria.
+* **Git/DevOps**: Handled commits, versioning (`0.0.2` baseline), and pushed code to GitHub.
