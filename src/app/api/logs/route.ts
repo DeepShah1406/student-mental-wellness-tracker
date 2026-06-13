@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { saveLog, getLogs } from "@/lib/supabase";
 import { extractJournalAnalytics } from "@/lib/groq";
+import { scrubPII } from "@/lib/scrub";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,8 +15,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Scrub personal identifiable information before sending to external LLM
+    const cleanText = scrubPII(journal_text || "");
+
     // Run trigger and sentiment extraction using Groq (or fallback)
-    const { dominant_emotion, triggers } = await extractJournalAnalytics(journal_text || "");
+    const { dominant_emotion, triggers } = await extractJournalAnalytics(cleanText);
 
     // Save daily log
     const saved = await saveLog({

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { saveChatMessage, getChatHistory } from "@/lib/supabase";
 import { checkCrisis, CRISIS_RESOURCES } from "@/lib/safety";
 import { generateEmpatheticResponse } from "@/lib/groq";
+import { scrubPII } from "@/lib/scrub";
 
 export async function POST(req: NextRequest) {
   try {
@@ -36,8 +37,14 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 2. Clear prompt path: Generate response using Groq / mock
-    const aiResponse = await generateEmpatheticResponse(message, history || []);
+    // 2. Clear prompt path: Scrub PII and generate response using Groq / mock
+    const cleanMessage = scrubPII(message);
+    const cleanHistory = (history || []).map((h: any) => ({
+      role: h.role,
+      content: scrubPII(h.content)
+    }));
+
+    const aiResponse = await generateEmpatheticResponse(cleanMessage, cleanHistory);
 
     // 3. Save clean chat message to database
     await saveChatMessage({

@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Home() {
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string>("");
+  const [keyInput, setKeyInput] = useState<string>("");
+  const [copied, setCopied] = useState<boolean>(false);
+  const [restoreMessage, setRestoreMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     // Check if session ID exists in localStorage, otherwise create a new one
@@ -15,6 +18,35 @@ export default function Home() {
     }
     setSessionId(currentSessionId);
   }, []);
+
+  const handleCopyKey = () => {
+    navigator.clipboard.writeText(sessionId);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleRestoreKey = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanKey = keyInput.trim();
+    
+    // Simple UUID validation regex
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    
+    if (!cleanKey) {
+      setRestoreMessage({ type: "error", text: "Please enter a valid passkey." });
+      return;
+    }
+
+    if (!uuidRegex.test(cleanKey)) {
+      setRestoreMessage({ type: "error", text: "Invalid passkey format. Make sure it matches the copied key." });
+      return;
+    }
+
+    localStorage.setItem("mindguard_session_id", cleanKey);
+    setSessionId(cleanKey);
+    setKeyInput("");
+    setRestoreMessage({ type: "success", text: "Session passkey restored successfully! Your history is loaded." });
+  };
 
   return (
     <div className="flex-1 flex flex-col justify-center relative overflow-hidden bg-slate-950">
@@ -92,6 +124,55 @@ export default function Home() {
               View stats <span>→</span>
             </div>
           </Link>
+        </div>
+
+        {/* Data Security & recovery key panel */}
+        <div className="max-w-3xl mx-auto mb-10 p-6 rounded-2xl border border-slate-900 bg-slate-900/25 backdrop-blur-sm grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+          <div className="space-y-3">
+            <h3 className="font-bold text-sm text-slate-200">🛡️ Your Anonymous Wellness Key</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              To guarantee absolute privacy, we do not require accounts. All logs are linked to this unique key. 
+              <strong> Save this key!</strong> If you clear cookies or use another device, you can load your session here.
+            </p>
+            <div className="flex gap-2 bg-slate-950 border border-slate-800 rounded-lg p-2.5 items-center justify-between">
+              <code className="text-xs text-indigo-400 select-all font-mono truncate max-w-[200px]">
+                {sessionId}
+              </code>
+              <button
+                onClick={handleCopyKey}
+                className="bg-indigo-600/15 hover:bg-indigo-600/25 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded text-[10px] font-bold transition-all uppercase"
+              >
+                {copied ? "Copied" : "Copy"}
+              </button>
+            </div>
+          </div>
+
+          <form onSubmit={handleRestoreKey} className="space-y-3 flex flex-col justify-end">
+            <h3 className="font-bold text-sm text-slate-200">🔑 Restore Existing Session</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Enter your saved Wellness Key below to reload your previous logs and chats.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={keyInput}
+                onChange={(e) => setKeyInput(e.target.value)}
+                placeholder="Paste your UUID key here..."
+                className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/50 font-mono"
+              />
+              <button
+                type="submit"
+                className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded-lg text-xs transition-all"
+              >
+                Load
+              </button>
+            </div>
+            {restoreMessage && (
+              <p className={`text-[10px] font-semibold ${restoreMessage.type === "success" ? "text-emerald-400" : "text-rose-400"}`}>
+                {restoreMessage.text}
+              </p>
+            )}
+          </form>
         </div>
 
         {/* Safety Warning */}

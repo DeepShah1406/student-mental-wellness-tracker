@@ -26,6 +26,8 @@ export default function DashboardPage() {
   const [triggers, setTriggers] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [mounted, setMounted] = useState<boolean>(false);
+  const [purging, setPurging] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
 
   useEffect(() => {
     setMounted(true);
@@ -58,6 +60,40 @@ export default function DashboardPage() {
 
     fetchAnalytics();
   }, [userId]);
+
+  const handleCopyKey = () => {
+    navigator.clipboard.writeText(userId);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handlePurgeData = async () => {
+    const doubleConfirm = confirm(
+      "⚠️ WARNING: This will permanently delete all your daily logs and chat history from Supabase and our local cache databases. This action is irreversible.\n\nDo you want to proceed and wipe all data?"
+    );
+    if (!doubleConfirm) return;
+
+    setPurging(true);
+    try {
+      const res = await fetch("/api/purge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId })
+      });
+      const json = await res.json();
+      if (json.success) {
+        localStorage.removeItem("mindguard_session_id");
+        alert("All your data has been successfully wiped. Redirecting to home page...");
+        window.location.href = "/";
+      } else {
+        alert(json.error || "Failed to wipe data.");
+      }
+    } catch (err) {
+      alert("Failed to connect to the server to purge data.");
+    } finally {
+      setPurging(false);
+    }
+  };
 
   const moodScoreLabel = (score: number) => {
     switch (score) {
@@ -243,7 +279,7 @@ export default function DashboardPage() {
                         {log.mood}
                       </span>
                       <span className="text-xs text-slate-500">
-                        {new Date(log.created_at).toLocaleDateString("en-IN", {
+                        {new Date(log.created_at!).toLocaleDateString("en-IN", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",
@@ -275,6 +311,42 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Privacy Controls Panel (Wipe Data & Copy Passkey) */}
+          <div className="p-6 rounded-2xl border border-slate-900 bg-slate-900/15 backdrop-blur-sm grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <div className="space-y-2">
+              <h3 className="font-bold text-sm text-slate-200">🛡️ Your Anonymous Session Key</h3>
+              <p className="text-xs text-slate-400 leading-normal">
+                All dashboard data is securely anchored to this key in your browser. 
+                Keep a copy of it so you can restore your session in case your browser cookies are cleared.
+              </p>
+              <div className="flex gap-2 bg-slate-950 border border-slate-800 rounded-lg p-2 items-center justify-between">
+                <code className="text-xs text-indigo-400 select-all font-mono truncate max-w-[250px]">
+                  {userId}
+                </code>
+                <button
+                  onClick={handleCopyKey}
+                  className="bg-indigo-600/15 hover:bg-indigo-600/25 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded text-[10px] font-bold transition-all uppercase"
+                >
+                  {copied ? "Copied" : "Copy"}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-2 flex flex-col justify-end">
+              <h3 className="font-bold text-sm text-slate-200 text-rose-400">🚨 Purge Personal Data</h3>
+              <p className="text-xs text-slate-400 leading-normal">
+                Wish to delete everything? Pressing the wipe button immediately erases all logs and chats matching your key from our databases.
+              </p>
+              <button
+                onClick={handlePurgeData}
+                disabled={purging}
+                className="w-full bg-rose-600/10 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/20 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-50"
+              >
+                {purging ? "Purging Wellness Data..." : "Wipe All My Data Permanently"}
+              </button>
             </div>
           </div>
         </div>

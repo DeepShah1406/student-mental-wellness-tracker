@@ -174,3 +174,48 @@ export async function getChatHistory(userId: string): Promise<ChatMessage[]> {
     .filter(chat => chat.user_id === userId)
     .sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime());
 }
+
+/**
+ * Purges all daily logs and chat history for a given user from Supabase and local cache.
+ */
+export async function purgeUserData(userId: string): Promise<boolean> {
+  let supabaseSuccess = false;
+
+  if (supabase) {
+    try {
+      const logDelete = await supabase.from("daily_logs").delete().eq("user_id", userId);
+      const chatDelete = await supabase.from("chat_history").delete().eq("user_id", userId);
+      
+      if (!logDelete.error && !chatDelete.error) {
+        supabaseSuccess = true;
+      } else {
+        console.warn("Supabase purge returned errors, applying local cache purge anyway:", { logs: logDelete.error, chats: chatDelete.error });
+      }
+    } catch (err) {
+      console.warn("Failed to purge from Supabase, applying local cache purge:", err);
+    }
+  }
+
+  // Always apply to local JSON database fallback
+  try {
+    ensureLocalDb();
+    
+    // Purge local logs
+    const logsContent = fs.readFileSync(LOCAL_LOGS_FILE, "utf-8");
+    const logsList: DailyLog[] = JSON.parse(logsContent);
+    const filteredLogs = logsList.filter(log => log.user_id !== userId);
+    fs.writeFileSync(LOCAL_LOGS_FILE, JSON.stringify(filteredLogs, null, 2));
+
+    // Purge local chats
+    const chatsContent = fs.readFileSync(LOCAL_CHATS_FILE, "utf-8");
+    const chatsList: ChatMessage[] = JSON.parse(chatsContent);
+    const filteredChats = chatsList.filter(chat => chat.user_id !== userId);
+    fs.writeFileSync(LOCAL_CHATS_FILE, JSON.stringify(filteredChats, null, 2));
+
+    return true;
+  } catch (err) {
+    console.error("Failed to purge local JSON database cache:", err);
+    return supabaseSuccess;
+  }
+}
+
