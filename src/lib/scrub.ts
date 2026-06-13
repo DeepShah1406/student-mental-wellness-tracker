@@ -10,7 +10,7 @@ const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 const PHONE_REGEX = /(\+91|0)?[6-9]\d{9}/g;
 
 // Regex for common name structures (e.g. My name is X, I am Y)
-const INTRO_NAME_REGEX = /\b(?:my name is|i am|this is|myself)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b/gi;
+const INTRO_NAME_REGEX = /\b(?:[mM]y\s+[nN]ame\s+[iI]s|[iI]\s+[aA]m|[tT]his\s+[iI]s|[mM]yself)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b/g;
 
 /**
  * Redacts emails, phone numbers, and simple name introductions from the text.
