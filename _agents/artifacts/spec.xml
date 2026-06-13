@@ -24,7 +24,10 @@
   acceptance_criteria: [
     "AC1: Given a student submits a journal log, when it contains specific stress triggers, then the system must save the log and extract those triggers to update the analytics dashboard.",
     "AC2: Given a student types a message indicating self-harm or severe crisis, when the system pre-scans it, then it must bypass the LLM, display a red card with emergency helpline numbers, and disable standard chat response.",
-    "AC3: Given a student asks for coping strategies for exam anxiety, when the chatbot responds, then it must ground its response in WHO/MoHFW wellness frameworks and include a grounding source citation."
+    "AC3: Given a student asks for coping strategies for exam anxiety, when the chatbot responds, then it must ground its response in WHO/MoHFW wellness frameworks and include a grounding source citation.",
+    "AC4: Given a student submits a journal log or message, when it contains PII (emails, phone numbers, names), then the system must scrub/redact it before sending it to external LLM APIs to maintain absolute privacy.",
+    "AC5: Given a student wants to clear their local history, when they trigger 'Wipe My Data', then the system must purge all local and database records to prevent unauthorized access.",
+    "AC6: Given an unauthenticated visitor, when they access any app route, then they must be redirected to the Login/Signup portal which supports anonymous signup and test credentials (test123@hoop.com / 3072@Admin)."
   ]
   risks_assumptions: [
     "Assumption: LLM APIs are online and fast enough for real-time interaction.",

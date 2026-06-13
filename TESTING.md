@@ -41,6 +41,32 @@ This document records the functional verification and evaluation of the **MindGu
     1. Intercepts the query at `/api/chat` and returns: *"I want to support you, but my role is focused solely on your mental wellness... I cannot help with homework questions."*
 *   **Evidence:** Bounded system prompt and negative prompt guards successfully tested.
 
+### [PASS] AC4: PII Data Scrubbing
+*   **GIVEN** a student writes a journal log or message containing sensitive identifiers (e.g., *"My email is rahul12@gmail.com and mobile is +91-9876543210. I am Rahul Sharma"*),
+*   **WHEN** the system processes this input,
+*   **THEN** the system:
+    1. Runs the PII scrubbing module (`src/lib/scrub.ts`),
+    2. Replaces emails with `[EMAIL]`, phone numbers with `[PHONE]`, and matches names (e.g. "Rahul Sharma") with `[NAME]`,
+    3. Sends the sanitized text to Groq API to ensure no PII leakage.
+*   **Evidence:** Verified that the scrub utility successfully redacts sensitive strings before sending data to remote models.
+
+### [PASS] AC5: "Wipe My Data" Purge
+*   **GIVEN** a student decides to clear their local database entries and journal history,
+*   **WHEN** they click the "Wipe My Data" button on the UI (or trigger `/api/purge`),
+*   **THEN** the system:
+    1. Clears local state storage cache (`local_db_logs.json` and `local_db_chats.json`),
+    2. Wipes any Supabase tables corresponding to their session,
+    3. Resets application-level storage so no trace remains.
+*   **Evidence:** Verified purge endpoint returns success and resets all local lists.
+
+### [PASS] AC6: Session Authentication Guard
+*   **GIVEN** an unauthenticated visitor tries to load `/`, `/log`, `/chat`, or `/dashboard`,
+*   **WHEN** the `AuthGuard` checks the session cookie or local storage,
+*   **THEN** they are immediately redirected to the `/login` portal.
+*   **WHEN** the visitor enters the test credentials (`test123@hoop.com` / `3072@Admin`) or registers a new anonymous account,
+*   **THEN** they are logged in, session state is updated, and they are redirected to `/`.
+*   **Evidence:** Fully implemented using local persistence and client-side guards with TypeScript/React route protection.
+
 ---
 
 ## 2. H2S Focus Areas Evaluation
