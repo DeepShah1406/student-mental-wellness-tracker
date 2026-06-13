@@ -183,20 +183,20 @@ export default function DashboardPage() {
                 {mounted && trend.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={trend} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
-                      <XAxis dataKey="date" stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-secondary)" vertical={false} />
+                      <XAxis dataKey="date" stroke="var(--text-tertiary)" fontSize={11} tickLine={false} axisLine={false} />
                       <YAxis
                         domain={[1, 5]}
                         ticks={[1, 2, 3, 4, 5]}
                         tickFormatter={(v) => moodScoreLabel(v)[0]} // Initial letter
-                        stroke="#64748B"
+                        stroke="var(--text-tertiary)"
                         fontSize={11}
                         tickLine={false}
                         axisLine={false}
                       />
                       <Tooltip
-                        contentStyle={{ backgroundColor: "#0F172A", borderColor: "#1E293B", borderRadius: "10px" }}
-                        labelStyle={{ color: "#94A3B8", fontWeight: "bold" }}
+                        contentStyle={{ backgroundColor: "var(--card-bg)", borderColor: "var(--card-border)", borderRadius: "10px", color: "var(--text-primary)" }}
+                        labelStyle={{ color: "var(--text-secondary)", fontWeight: "bold" }}
                         formatter={(value: any) => [moodScoreLabel(value), "Mood"]}
                       />
                       <Line
