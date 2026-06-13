@@ -61,6 +61,9 @@ export default function NavbarClient() {
           <Link href="/chat" className="hover:text-white transition-colors flex items-center gap-1.5">
             💬 <span className="hidden sm:inline">AI Companion</span>
           </Link>
+          <Link href="/relax" className="hover:text-white transition-colors flex items-center gap-1.5">
+            🧘‍♀️ <span className="hidden sm:inline">Relax Center</span>
+          </Link>
 
           {mounted && isLoggedIn && (
             <div className="flex items-center gap-3 border-l border-slate-800 pl-4">
