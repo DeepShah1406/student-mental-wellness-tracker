@@ -2,36 +2,37 @@ const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const SYSTEM_PROMPT = `
-You are an empathetic, supportive mental wellness assistant tailored for students preparing for high-stakes examinations (such as JEE, NEET, board exams, UPSC, and CUET).
-Your sole mission is to offer stress management advice, emotional grounding, time-management tips, anxiety control strategies, and reassurance.
-You must ground your advice in clinical wellness frameworks (such as Cognitive Behavioral Therapy techniques, progressive muscle relaxation, mindfulness, and breathing patterns).
-Always provide short, warm, and highly structured suggestions.
-Cite guidelines like the World Health Organization (WHO) or Ministry of Health and Family Welfare (MoHFW) for stress-management techniques where appropriate.
-If the user asks questions such as "How do I solve this physics problem?", "Explain the citric acid cycle", or "Write a Python script", you must politely decline and remind them that your role is solely to support their emotional and mental well-being during exam preparation.
-Never prescribe or suggest specific medical drugs (e.g. anti-depressants, sleeping pills) - instruct them to seek medical professionals.
+You are an empathetic, supportive mental wellness assistant tailored specifically for students in India preparing for high-stakes competitive examinations (such as JEE, NEET, CBSE/State Board exams, UPSC, GATE, and CUET) and dealing with intense coaching class environments (e.g., Kota, coaching centers, dummy schools).
+Your sole mission is to offer stress management advice, emotional grounding, time-management tips, exam anxiety control strategies, and warm reassurance.
+You must ground your advice in clinical wellness frameworks (such as CBT techniques, progressive muscle relaxation, mindfulness, and breathing exercises).
+Always tailor your responses to the Indian student context. Refer to support initiatives in India such as NIMHANS (National Institute of Mental Health and Neurosciences), the Government's Tele-MANAS initiative, and the Ministry of Health and Family Welfare (MoHFW) student wellness advisories.
+If any financial aspects or pricing of study/wellness tools are mentioned, always refer to costs in Indian Rupees (₹).
+Provide short, structured, and warm suggestions.
+If the user asks academic syllabus questions (e.g. solving equations, organic chemistry steps, coding, or homework queries), politely decline, reminding them that your role is strictly to support their mental and emotional well-being during their preparation journey.
+Never prescribe or suggest specific medical drugs (e.g., anti-depressants, sleeping pills) - instruct them to consult a qualified medical professional or contact the Kiran Helpline (1800-599-0019) or Tele-MANAS (14416).
 `;
 
 // Helper list of mock responses based on keywords when Groq is unreachable
 const MOCK_COPING_RESPONSES = [
   {
     keywords: ["mock", "test", "exam", "score", "fail", "cutoff", "result"],
-    response: "It is completely normal to feel stressed about mock test scores. Remember, mock tests are diagnostic tools to help you identify areas for improvement, not definitions of your worth or final results. Take a deep breath. Try breaking your syllabus down into smaller chunks, and give yourself credit for the effort you are putting in today. According to WHO wellness guidelines, prioritizing structured study breaks (e.g., 50 minutes study, 10 minutes rest) can significantly reduce cognitive fatigue."
+    response: "It is completely normal to feel stressed about mock test scores or coaching class rank lists. In India's competitive exam setup (NEET/JEE/UPSC), mock tests are diagnostic tools to help you identify areas for improvement, not definitions of your worth. Take a deep breath. Try breaking your syllabus down into smaller topics. According to Ministry of Health & Family Welfare (MoHFW) student wellness advisories, prioritizing structured study breaks (e.g., 50 minutes study, 10 minutes rest) can significantly reduce cognitive fatigue."
   },
   {
     keywords: ["tired", "sleep", "exhausted", "burnout", "fatigue"],
-    response: "Burnout is a serious signal that your body and mind need rest. Academic preparation is a marathon, not a sprint. Try to set a strict wind-down time at night, avoiding screens 30 minutes before sleep. If you find your mind racing, practice progressive muscle relaxation: tense each muscle group for 5 seconds, then release. Grounding yourself in regular 7-8 hour sleep patterns is vital for memory consolidation, as highlighted in wellness guidelines."
+    response: "Burnout is a serious signal that your body and mind need rest, especially under intense study schedules (12-14 hours of daily prep). Academic preparation is a marathon, not a sprint. Try to set a strict wind-down time at night, avoiding screens 30 minutes before sleep. NIMHANS guidelines emphasize that regular 7-8 hour sleep patterns are vital for memory consolidation and focus."
   },
   {
     keywords: ["parent", "family", "pressure", "expectation"],
-    response: "Navigating expectations from family while preparing for competitive exams adds a heavy emotional load. Your pressure is valid. Try writing down your feelings or having an honest, calm conversation with them about how you are doing. Remember that your well-being is the most important foundation for any exam. Taking brief walks outside can help clear your mind."
+    response: "Navigating expectations from parents or family while preparing for competitive exams in India adds a heavy emotional load. Your pressure is valid. Try writing down your feelings or having an honest, calm conversation with them about how you are doing. Remember that your well-being is the most important foundation for any exam. The Kiran Helpline (1800-599-0019) or Tele-MANAS (14416) also offer free, confidential counseling if you need a professional to talk to."
   },
   {
     keywords: ["chemistry", "physics", "math", "syllabus", "subject", "stuck"],
-    response: "Getting stuck on specific subjects like Chemistry, Physics, or Mathematics can trigger intense anxiety. When this happens, shift your focus to what you *do* understand, or take a 10-minute break. A simple 5-4-3-2-1 grounding exercise can help: identify 5 things you see, 4 you can touch, 3 you hear, 2 you smell, and 1 you taste. This shifts your brain out of panic mode so you can approach the concept with a fresh perspective."
+    response: "Getting stuck on specific subjects like Chemistry, Physics, or Mathematics can trigger intense anxiety, especially under tight coaching timelines. When this happens, shift your focus to what you *do* understand, or take a 10-minute break. A simple 5-4-3-2-1 grounding exercise can help: identify 5 things you see, 4 you can touch, 3 you hear, 2 you smell, and 1 you taste. This shifts your brain out of panic mode so you can approach the concept with a fresh perspective."
   }
 ];
 
-const DEFAULT_MOCK_RESPONSE = "I hear you, and it sounds like you are carrying a lot of weight right now. Preparing for these competitive milestones is incredibly challenging, and feeling overwhelmed is a natural response. Remember to take it one day, one study session at a time. What is one small thing you can do to take care of yourself right now, even if it's just drinking a glass of water or taking three deep breaths? I am here to support you.";
+const DEFAULT_MOCK_RESPONSE = "I hear you, and it sounds like you are carrying a lot of weight right now. Preparing for these Indian competitive milestones is incredibly challenging, and feeling overwhelmed is a natural response. Remember to take it one day, one study session at a time. What is one small thing you can do to take care of yourself right now, even if it's just drinking a glass of water, taking three deep breaths, or connecting with friends? For professional guidance, you can also reach out to NIMHANS counseling lines or call the Government's Tele-MANAS helpline at 14416. I am here to support you.";
 
 /**
  * Calls the Groq API or falls back to local rule-based parsing.
