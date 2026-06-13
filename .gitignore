@@ -42,5 +42,7 @@ next-env.d.ts
 
 # local databases & config
 local_db_*.json
+!local_db_logs.json
+!local_db_chats.json
 mcp_config.json
 

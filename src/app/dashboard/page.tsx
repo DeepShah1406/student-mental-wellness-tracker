@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-import EvaluatorWidget from "@/components/evaluator-widget";
 import MoodCalendar from "@/components/mood-calendar";
 
 interface LogItem {
@@ -148,8 +147,6 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* Codebase Evaluator Widget */}
-      <EvaluatorWidget />
 
       {logs.length === 0 ? (
         /* Empty State */

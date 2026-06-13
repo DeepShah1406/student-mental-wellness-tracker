@@ -1,0 +1,86 @@
+[
+  {
+    "user_id": "f1a3d568-1936-49a1-959e-cc649e200529",
+    "mood": "great",
+    "journal_text": "Today went really well. Cleared physics doubts in vectors and kinematics. Re-gained my confidence for the weekly mock test.",
+    "dominant_emotion": "Happiness",
+    "triggers": [
+      "physics vectors",
+      "study confidence"
+    ],
+    "id": "e575d45b-365c-48e7-b1bc-21cdce9b2e71",
+    "created_at": "2026-06-07T07:22:00.000Z"
+  },
+  {
+    "user_id": "f1a3d568-1936-49a1-959e-cc649e200529",
+    "mood": "good",
+    "journal_text": "Did 6 hours of coaching class. Inorganic chemistry is memory-heavy but I managed to make reactions cheat sheets. Feeling organized.",
+    "dominant_emotion": "Focus",
+    "triggers": [
+      "inorganic chemistry",
+      "class hours"
+    ],
+    "id": "e575d45b-365c-48e7-b1bc-21cdce9b2e72",
+    "created_at": "2026-06-08T07:22:00.000Z"
+  },
+  {
+    "user_id": "f1a3d568-1936-49a1-959e-cc649e200529",
+    "mood": "okay",
+    "journal_text": "Felt a bit tired today. Solved maths integration papers. Took longer than expected. Peer discussion group was helpful though.",
+    "dominant_emotion": "Fatigue",
+    "triggers": [
+      "math integration",
+      "peer discussion"
+    ],
+    "id": "e575d45b-365c-48e7-b1bc-21cdce9b2e73",
+    "created_at": "2026-06-09T07:22:00.000Z"
+  },
+  {
+    "user_id": "f1a3d568-1936-49a1-959e-cc649e200529",
+    "mood": "anxious",
+    "journal_text": "Heart is racing thinking about the physics mock results tomorrow. I feel like I'll fail mock exams. Stressed about coach's feedback.",
+    "dominant_emotion": "Anxiety",
+    "triggers": [
+      "mock exams",
+      "subject blockers"
+    ],
+    "id": "e575d45b-365c-48e7-b1bc-21cdce9b2e74",
+    "created_at": "2026-06-10T07:22:00.000Z"
+  },
+  {
+    "user_id": "f1a3d568-1936-49a1-959e-cc649e200529",
+    "mood": "overwhelmed",
+    "journal_text": "Physics mock score is 110/300. Catastrophic thinking. I spent all week studying and failed. Parents asked about the marks. I feel like quitting JEE prep.",
+    "dominant_emotion": "Overwhelm",
+    "triggers": [
+      "mock test failure",
+      "parent expectations"
+    ],
+    "id": "e575d45b-365c-48e7-b1bc-21cdce9b2e75",
+    "created_at": "2026-06-11T07:22:00.000Z"
+  },
+  {
+    "user_id": "f1a3d568-1936-49a1-959e-cc649e200529",
+    "mood": "okay",
+    "journal_text": "Talked with the AI wellness companion and did box breathing. Felt slightly better. Revised chemical bonding notes slowly.",
+    "dominant_emotion": "Coping",
+    "triggers": [
+      "revision schedule",
+      "breathing exercise"
+    ],
+    "id": "e575d45b-365c-48e7-b1bc-21cdce9b2e76",
+    "created_at": "2026-06-12T07:22:00.000Z"
+  },
+  {
+    "user_id": "f1a3d568-1936-49a1-959e-cc649e200529",
+    "mood": "good",
+    "journal_text": "Today is better. Focused on step-by-step math problems. Managed to get 15 correct in a row. Celebrating small wins.",
+    "dominant_emotion": "Calm",
+    "triggers": [
+      "problem solving",
+      "celebrating wins"
+    ],
+    "id": "e575d45b-365c-48e7-b1bc-21cdce9b2e77",
+    "created_at": "2026-06-13T07:22:00.000Z"
+  }
+]

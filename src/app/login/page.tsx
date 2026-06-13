@@ -33,6 +33,7 @@ export default function LoginPage() {
         if (trimmedEmail === "test123@hoop.com" && password === "3072@Admin") {
           localStorage.setItem("mindguard_logged_in", "true");
           localStorage.setItem("mindguard_user_email", trimmedEmail);
+          localStorage.setItem("mindguard_session_id", "f1a3d568-1936-49a1-959e-cc649e200529");
           setSuccess("Welcome back! Loading secure session...");
           setTimeout(() => {
             router.push("/");
