@@ -27,7 +27,11 @@
     "AC3: Given a student asks for coping strategies for exam anxiety, when the chatbot responds, then it must ground its response in WHO/MoHFW wellness frameworks and include a grounding source citation.",
     "AC4: Given a student submits a journal log or message, when it contains PII (emails, phone numbers, names), then the system must scrub/redact it before sending it to external LLM APIs to maintain absolute privacy.",
     "AC5: Given a student wants to clear their local history, when they trigger 'Wipe My Data', then the system must purge all local and database records to prevent unauthorized access.",
-    "AC6: Given an unauthenticated visitor, when they access any app route, then they must be redirected to the Login/Signup portal which supports anonymous signup and test credentials (test123@hoop.com / 3072@Admin)."
+    "AC6: Given an unauthenticated visitor, when they access any app route, then they must be redirected to the Login/Signup portal which supports anonymous signup and test credentials (test123@hoop.com / 3072@Admin).",
+    "AC7: Given a student is on the Relax Center page, when the Pomodoro timer finishes, then the system must play a synthesized chime and transition focus sessions.",
+    "AC8: Given a student clicks a bubble in the Relax Center, when the click is registered, then the bubble must pop with visual canvas explosions and play a synthesized plop sound.",
+    "AC9: Given a student toggles the theme button, when selected, then the application color theme must shift between slate-teal dark mode and emerald-mint light mode.",
+    "AC10: Given a student successfully submits a journal entry, when saved, then the page must play an overlay canvas confetti animation."
   ]
   risks_assumptions: [
     "Assumption: LLM APIs are online and fast enough for real-time interaction.",

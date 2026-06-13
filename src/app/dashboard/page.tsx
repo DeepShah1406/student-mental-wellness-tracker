@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import EvaluatorWidget from "@/components/evaluator-widget";
+import MoodCalendar from "@/components/mood-calendar";
 
 interface LogItem {
   id: string;
@@ -146,6 +148,9 @@ export default function DashboardPage() {
         </Link>
       </div>
 
+      {/* Codebase Evaluator Widget */}
+      <EvaluatorWidget />
+
       {logs.length === 0 ? (
         /* Empty State */
         <div className="p-12 text-center rounded-2xl border border-slate-900 bg-slate-900/10 backdrop-blur-sm space-y-4 py-20 max-w-xl mx-auto">
@@ -200,9 +205,9 @@ export default function DashboardPage() {
                       <Line
                         type="monotone"
                         dataKey="mood_score"
-                        stroke="#6366F1"
+                        stroke="var(--accent-teal, #0d9488)"
                         strokeWidth={3}
-                        dot={{ fill: "#6366F1", r: 4 }}
+                        dot={{ fill: "var(--accent-teal, #0d9488)", r: 4 }}
                         activeDot={{ r: 6, strokeWidth: 0 }}
                       />
                     </LineChart>
@@ -259,6 +264,9 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
+
+          {/* Mood Calendar Tracker */}
+          <MoodCalendar logs={logs} />
 
           {/* Bottom Row: Detailed Log Timeline */}
           <div className="p-6 rounded-2xl border border-slate-900 bg-slate-900/20 backdrop-blur-sm space-y-6">

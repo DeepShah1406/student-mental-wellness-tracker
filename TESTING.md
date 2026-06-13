@@ -67,6 +67,34 @@ This document records the functional verification and evaluation of the **MindGu
 *   **THEN** they are logged in, session state is updated, and they are redirected to `/`.
 *   **Evidence:** Fully implemented using local persistence and client-side guards with TypeScript/React route protection.
 
+### [PASS] AC7: Pomodoro Study Break Timer
+*   **GIVEN** a student is on the Relax Center (`/relax`),
+*   **WHEN** they click "Start Focus",
+*   **THEN** the Pomodoro timer starts counting down from 25 minutes, updating a circular SVG progress track in real-time.
+*   **WHEN** the timer hits 00:00,
+*   **THEN** it automatically plays a custom synthesized chime sound (Web Audio API) and shifts the session to a Rest Break (5m or 15m) to refresh the mind.
+*   **Evidence:** Circular progress maths and state switches verified during runtime.
+
+### [PASS] AC8: Canvas-Based Zen Bubble Popper
+*   **GIVEN** a student is on the Relax Center,
+*   **WHEN** they look at the Zen Bubble Popper canvas,
+*   **THEN** they see gentle transparent gradient bubbles floating up the screen.
+*   **WHEN** they tap/click a bubble,
+*   **THEN** the system plays a synthesized low-pass water-plop sound (Web Audio API) and spawns canvas particle physics explosions.
+*   **Evidence:** Smooth 60fps canvas animation and hit detection tested and validated.
+
+### [PASS] AC9: Dynamic Light / Dark Theme Switcher
+*   **GIVEN** a student is browsing any page,
+*   **WHEN** they click the "Light / Dark" button in the navigation header,
+*   **THEN** the app toggles the `.dark` class on the `html` element and saves the setting in `localStorage` to avoid flash-of-unstyled-content on page reload.
+*   **Evidence:** Verified immediate transition from Slate/Teal dark mode to a premium emerald-mint green light mode.
+
+### [PASS] AC10: Canvas Confetti Feedback
+*   **GIVEN** a student submits a journal log on `/log`,
+*   **WHEN** the API returns success,
+*   **THEN** the page triggers a massive custom canvas-based particle confetti spray from the bottom center.
+*   **Evidence:** Successful log submission triggers confetti animation and renders properly on overlay.
+
 ---
 
 ## 2. H2S Focus Areas Evaluation

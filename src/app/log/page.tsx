@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Confetti, { ConfettiRef } from "@/components/confetti";
 
 const MOODS = [
   { id: "great", emoji: "😊", label: "Great", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25" },
@@ -12,6 +13,7 @@ const MOODS = [
 ];
 
 export default function LogPage() {
+  const confettiRef = useRef<ConfettiRef | null>(null);
   const [userId, setUserId] = useState<string>("");
   const [selectedMood, setSelectedMood] = useState<string>("okay");
   const [journalText, setJournalText] = useState<string>("");
@@ -51,6 +53,9 @@ export default function LogPage() {
       const json = await res.json();
       if (json.success) {
         setResult(json.data);
+        setTimeout(() => {
+          confettiRef.current?.trigger();
+        }, 100);
       } else {
         setError(json.error || "Failed to save daily log.");
       }
@@ -63,6 +68,7 @@ export default function LogPage() {
 
   return (
     <div className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
+      <Confetti ref={confettiRef} />
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
           Write Your Daily Log
