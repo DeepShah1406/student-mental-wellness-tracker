@@ -1,0 +1,415 @@
+<API_CONTRACT>
+  <GLOBAL_SETTINGS>
+    <BASE_URL>/api</BASE_URL>
+    <HEADERS>
+      <HEADER name="Content-Type" value="application/json" />
+    </HEADERS>
+    <SECURITY>
+      <AUTHENTICATION_TYPE>Session-based UUID (client-generated and persistent in localStorage, or optionally mapped to Supabase Auth user accounts)</AUTHENTICATION_TYPE>
+    </SECURITY>
+  </GLOBAL_SETTINGS>
+
+  <ENDPOINTS>
+    <!-- POST /api/logs -->
+    <ENDPOINT path="/logs" method="POST">
+      <DESCRIPTION>
+        Accepts a user mood and optional open-ended journal text. If text is provided, parses it using a Groq completion query to extract:
+        1. The dominant emotion (e.g. stress, anxiety, happiness, calm).
+        2. A list of specific exam-prep triggers (e.g. mock test, time limit, physics prep, math pressure).
+        Persists the final analysis into the `daily_logs` database and returns the generated metadata.
+      </DESCRIPTION>
+      <REQUEST>
+        <HEADERS>
+          <HEADER name="Content-Type" value="application/json" />
+        </HEADERS>
+        <BODY_JSON_SCHEMA>
+          <![CDATA[
+          {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Unique UUID identifying the student session"
+              },
+              "mood": {
+                "type": "string",
+                "enum": ["great", "good", "okay", "anxious", "overwhelmed"],
+                "description": "Selected mood option"
+              },
+              "journal_text": {
+                "type": "string",
+                "maxLength": 5000,
+                "description": "Open-ended journal input text written by the student"
+              }
+            },
+            "required": ["user_id", "mood", "journal_text"]
+          }
+          ]]>
+        </BODY_JSON_SCHEMA>
+        <EXAMPLE_PAYLOAD>
+          <![CDATA[
+          {
+            "user_id": "f51bbd8d-3b28-4e09-b68a-ef83d1c1bb84",
+            "mood": "overwhelmed",
+            "journal_text": "I spent 5 hours on physics numerical mock questions today and got most of them wrong. I feel like I am failing JEE preparation. Peer group pressure from coaching class is stressing me out."
+          }
+          ]]>
+        </EXAMPLE_PAYLOAD>
+      </REQUEST>
+      <RESPONSE status="201">
+        <DESCRIPTION>Log successfully processed, parsed by LLM, and saved to the database.</DESCRIPTION>
+        <BODY_JSON_SCHEMA>
+          <![CDATA[
+          {
+            "type": "object",
+            "properties": {
+              "success": { "type": "boolean" },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string", "format": "uuid" },
+                  "user_id": { "type": "string", "format": "uuid" },
+                  "mood": { "type": "string" },
+                  "journal_text": { "type": "string" },
+                  "dominant_emotion": { "type": "string", "description": "Extracted dominant emotion" },
+                  "triggers": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "List of extracted exam-prep triggers"
+                  },
+                  "created_at": { "type": "string", "format": "date-time" }
+                },
+                "required": ["id", "user_id", "mood", "journal_text", "dominant_emotion", "triggers", "created_at"]
+              }
+            },
+            "required": ["success", "data"]
+          }
+          ]]>
+        </BODY_JSON_SCHEMA>
+        <EXAMPLE_RESPONSE>
+          <![CDATA[
+          {
+            "success": true,
+            "data": {
+              "id": "a1d35ef6-d922-4467-8c3b-d2426617ba8d",
+              "user_id": "f51bbd8d-3b28-4e09-b68a-ef83d1c1bb84",
+              "mood": "overwhelmed",
+              "journal_text": "I spent 5 hours on physics numerical mock questions today and got most of them wrong. I feel like I am failing JEE preparation. Peer group pressure from coaching class is stressing me out.",
+              "dominant_emotion": "defeat/anxiety",
+              "triggers": ["physics numericals", "mock test failure", "peer pressure", "coaching class"],
+              "created_at": "2026-06-13T12:00:00.000Z"
+            }
+          }
+          ]]>
+        </EXAMPLE_RESPONSE>
+      </RESPONSE>
+      <ERRORS>
+        <ERROR status="400">
+          <REASON>Missing or invalid request properties (e.g. empty fields, invalid UUID).</REASON>
+          <EXAMPLE_BODY>
+            <![CDATA[
+            {
+              "success": false,
+              "error": "Validation failed: 'mood' is required and must be one of the allowed values."
+            }
+            ]]>
+          </EXAMPLE_BODY>
+        </ERROR>
+        <ERROR status="500">
+          <REASON>LLM API failure, Supabase database offline, or parsing error.</REASON>
+          <EXAMPLE_BODY>
+            <![CDATA[
+            {
+              "success": false,
+              "error": "Failed to process log: Groq API did not respond."
+            }
+            ]]>
+          </EXAMPLE_BODY>
+        </ERROR>
+      </ERRORS>
+    </ENDPOINT>
+
+    <!-- GET /api/logs -->
+    <ENDPOINT path="/logs" method="GET">
+      <DESCRIPTION>
+        Fetches the student's log history and analytics metrics.
+        Computes 7-day mood history and stress trigger tag frequencies for the student dashboard.
+      </DESCRIPTION>
+      <REQUEST>
+        <QUERY_PARAMETERS>
+          <PARAMETER name="user_id" type="string" required="true" description="Unique UUID identifying the student session" />
+          <PARAMETER name="days" type="integer" required="false" default="7" description="Number of days history to retrieve" />
+        </QUERY_PARAMETERS>
+      </REQUEST>
+      <RESPONSE status="200">
+        <DESCRIPTION>Success. Returns matching historical records and aggregated dashboard metadata.</DESCRIPTION>
+        <BODY_JSON_SCHEMA>
+          <![CDATA[
+          {
+            "type": "object",
+            "properties": {
+              "success": { "type": "boolean" },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "logs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string", "format": "uuid" },
+                        "mood": { "type": "string" },
+                        "dominant_emotion": { "type": "string" },
+                        "triggers": { "type": "array", "items": { "type": "string" } },
+                        "created_at": { "type": "string", "format": "date-time" }
+                      },
+                      "required": ["id", "mood", "dominant_emotion", "triggers", "created_at"]
+                    }
+                  },
+                  "mood_trend": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "date": { "type": "string", "description": "YYYY-MM-DD format" },
+                        "mood_score": { "type": "number", "description": "Numeric score mapping of mood" }
+                      },
+                      "required": ["date", "mood_score"]
+                    }
+                  },
+                  "trigger_frequencies": {
+                    "type": "object",
+                    "additionalProperties": { "type": "integer" },
+                    "description": "Key-value pair of trigger term and its count"
+                  }
+                },
+                "required": ["logs", "mood_trend", "trigger_frequencies"]
+              }
+            },
+            "required": ["success", "data"]
+          }
+          ]]>
+        </BODY_JSON_SCHEMA>
+        <EXAMPLE_RESPONSE>
+          <![CDATA[
+          {
+            "success": true,
+            "data": {
+              "logs": [
+                {
+                  "id": "a1d35ef6-d922-4467-8c3b-d2426617ba8d",
+                  "mood": "overwhelmed",
+                  "dominant_emotion": "defeat/anxiety",
+                  "triggers": ["physics numericals", "mock test failure", "peer pressure"],
+                  "created_at": "2026-06-13T12:00:00.000Z"
+                }
+              ],
+              "mood_trend": [
+                { "date": "2026-06-07", "mood_score": 4 },
+                { "date": "2026-06-08", "mood_score": 3 },
+                { "date": "2026-06-09", "mood_score": 2 },
+                { "date": "2026-06-10", "mood_score": 4 },
+                { "date": "2026-06-11", "mood_score": 5 },
+                { "date": "2026-06-12", "mood_score": 3 },
+                { "date": "2026-06-13", "mood_score": 1 }
+              ],
+              "trigger_frequencies": {
+                "physics numericals": 3,
+                "peer pressure": 2,
+                "mock test failure": 1,
+                "time management": 4
+              }
+            }
+          }
+          ]]>
+        </EXAMPLE_RESPONSE>
+      </RESPONSE>
+      <ERRORS>
+        <ERROR status="400">
+          <REASON>Missing required `user_id` query parameter.</REASON>
+          <EXAMPLE_BODY>
+            <![CDATA[
+            {
+              "success": false,
+              "error": "Query parameter 'user_id' is missing."
+            }
+            ]]>
+          </EXAMPLE_BODY>
+        </ERROR>
+      </ERRORS>
+    </ENDPOINT>
+
+    <!-- POST /api/chat -->
+    <ENDPOINT path="/chat" method="POST">
+      <DESCRIPTION>
+        Handles dialogue messages with the empathetic chat companion.
+        1. SAFETY PRE-CHECK: Parses user input for critical keywords denoting self-harm, suicide, or crisis.
+           - If a keyword matches: Immediately stops, bypasses Groq API, inserts a crisis marker entry in the chat database, and returns flagged=true with crisis helpline numbers.
+        2. CLEAN PROMPT PATH: If input is safe, queries Groq completions API with:
+           - A structured system prompt (grounded in clinical wellness frameworks, limits discussions to competitive exam stress).
+           - A negative prompt (forbids solving homework, coding, or answering general subjects).
+           - Previous session chat history.
+           Saves the final query & response pair in `chat_history`.
+      </DESCRIPTION>
+      <REQUEST>
+        <HEADERS>
+          <HEADER name="Content-Type" value="application/json" />
+        </HEADERS>
+        <BODY_JSON_SCHEMA>
+          <![CDATA[
+          {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {
+              "user_id": { "type": "string", "format": "uuid" },
+              "message": { "type": "string", "maxLength": 2000, "description": "Student's message content" },
+              "history": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "role": { "type": "string", "enum": ["user", "assistant"] },
+                    "content": { "type": "string" }
+                  },
+                  "required": ["role", "content"]
+                },
+                "description": "Conversation context history (last 5-10 messages max)"
+              }
+            },
+            "required": ["user_id", "message", "history"]
+          }
+          ]]>
+        </BODY_JSON_SCHEMA>
+        <EXAMPLE_PAYLOAD>
+          <![CDATA[
+          {
+            "user_id": "f51bbd8d-3b28-4e09-b68a-ef83d1c1bb84",
+            "message": "I'm feeling so anxious about the upcoming NEET mockup exam. I can't sleep or study.",
+            "history": []
+          }
+          ]]>
+        </EXAMPLE_PAYLOAD>
+      </REQUEST>
+      <RESPONSE status="200">
+        <DESCRIPTION>Success. Response may be flagged (safety bypass triggered) or unflagged (normal conversation path).</DESCRIPTION>
+        <BODY_JSON_SCHEMA>
+          <![CDATA[
+          {
+            "type": "object",
+            "properties": {
+              "success": { "type": "boolean" },
+              "flagged": { "type": "boolean", "description": "Indicates if crisis bypass was triggered" },
+              "response": { "type": "string", "description": "The AI's message response or crisis safety message" },
+              "grounding_source": { "type": "string", "description": "Reference source from WHO or MoHFW, if applicable" },
+              "resources": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "phone": { "type": "string" },
+                    "availability": { "type": "string" }
+                  },
+                  "required": ["name", "phone"]
+                },
+                "description": "Helplines provided if flagged=true"
+              }
+            },
+            "required": ["success", "flagged", "response"]
+          }
+          ]]>
+        </BODY_JSON_SCHEMA>
+        <EXAMPLE_RESPONSE_CLEAN>
+          <![CDATA[
+          {
+            "success": true,
+            "flagged": false,
+            "response": "It's completely natural to feel anxious when preparing for a high-stakes exam like NEET. When anxiety builds up, trying a quick breathing exercise can help ground you. You might try 'Box Breathing': inhale for 4 seconds, hold for 4, exhale for 4, and hold for 4. Studies cited in WHO stress-management guidelines show that slow breathing patterns signal to your brain that it is safe, helping to lower heart rate and restore focus.",
+            "grounding_source": "WHO Guidelines on Stress Management (2020)"
+          }
+          ]]>
+        </EXAMPLE_RESPONSE_CLEAN>
+        <EXAMPLE_RESPONSE_FLAGGED>
+          <![CDATA[
+          {
+            "success": true,
+            "flagged": true,
+            "response": "It sounds like you are going through an incredibly difficult time right now, and I want to make sure you have immediate support. Please connect with a professional counselor or helpline who can help you navigate this safely. You do not have to go through this alone.",
+            "resources": [
+              {
+                "name": "Kiran Mental Health Helpline (Ministry of Social Justice & Empowerment)",
+                "phone": "1800-599-0019",
+                "availability": "24/7"
+              },
+              {
+                "name": "AASRA Suicide Prevention Helpline",
+                "phone": "+91-9820466726",
+                "availability": "24/7"
+              }
+            ]
+          }
+          ]]>
+        </EXAMPLE_RESPONSE_FLAGGED>
+      </RESPONSE>
+      <ERRORS>
+        <ERROR status="400">
+          <REASON>Missing or invalid request payload parameters.</REASON>
+          <EXAMPLE_BODY>
+            <![CDATA[
+            {
+              "success": false,
+              "error": "Validation failed: 'message' content is empty."
+            }
+            ]]>
+          </EXAMPLE_BODY>
+        </ERROR>
+      </ERRORS>
+    </ENDPOINT>
+  </ENDPOINTS>
+
+  <SAFETY_BYPASS_POLICIES>
+    <POLICY name="Crisis Interception">
+      <TRIGGER_KEYWORDS>
+        <KEYWORD>suicide</KEYWORD>
+        <KEYWORD>kill myself</KEYWORD>
+        <KEYWORD>end my life</KEYWORD>
+        <KEYWORD>want to die</KEYWORD>
+        <KEYWORD>hanging myself</KEYWORD>
+        <KEYWORD>cutting myself</KEYWORD>
+        <KEYWORD>harming myself</KEYWORD>
+        <KEYWORD>self-harm</KEYWORD>
+        <KEYWORD>wish I was dead</KEYWORD>
+        <KEYWORD>overdose</KEYWORD>
+      </TRIGGER_KEYWORDS>
+      <BEHAVIOR>
+        If the incoming student chat message matches any of the listed substrings (case-insensitive, using boundary match or word root scanning):
+        1. Halt processing immediately.
+        2. DO NOT make a network call to the Groq API.
+        3. Insert the user's message and the standard crisis notification message into the `chat_history` database table.
+        4. Return the flagged JSON response payload (status 200, success=true, flagged=true, emergency helplines payload).
+        5. Frontend must capture `flagged: true` and immediately render the styled red card on screen, hiding standard AI interaction components if necessary.
+      </BEHAVIOR>
+    </POLICY>
+  </SAFETY_BYPASS_POLICIES>
+
+  <LLM_PROMPT_GUARDS>
+    <GUARD type="SYSTEM_PROMPT">
+      <![CDATA[
+      You are an empathetic, supportive mental wellness assistant tailored for students preparing for high-stakes examinations (such as JEE, NEET, board exams, UPSC, and CUET).
+      Your sole mission is to offer stress management advice, emotional grounding, time-management tips, anxiety control strategies, and reassurance.
+      You must ground your advice in clinical wellness frameworks (such as Cognitive Behavioral Therapy techniques, progressive muscle relaxation, mindfulness, and breathing patterns).
+      Always provide short, warm, and highly structured suggestions.
+      Cite guidelines like the World Health Organization (WHO) or Ministry of Health and Family Welfare (MoHFW) for stress-management techniques where appropriate.
+      ]]>
+    </GUARD>
+    <GUARD type="NEGATIVE_PROMPT">
+      <![CDATA[
+      You are strictly forbidden from helping the student with homework, academic curriculum, coding questions, maths equations, or scientific problem-solving.
+      If the user asks questions such as "How do I solve this physics problem?", "Explain the citric acid cycle", or "Write a Python script", you must politely decline and remind them that your role is solely to support their emotional and mental well-being during exam preparation.
+      Never prescribe or suggest specific medical drugs (e.g. anti-depressants, sleeping pills) - instruct them to seek medical professionals.
+      ]]>
+    </GUARD>
+  </LLM_PROMPT_GUARDS>
+</API_CONTRACT>

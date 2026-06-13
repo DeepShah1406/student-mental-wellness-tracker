@@ -1,0 +1,90 @@
+<SPEC>
+  problem_summary: "A GenAI-powered Mental Wellness Tracker to help students monitor and improve their well-being, manage stress/burnout, and address anxiety during high-stakes exams (NEET, JEE, CUET, etc.)."
+  primary_users: "Students preparing for competitive examinations/board exams facing intense pressure."
+  core_jobs_to_be_done: [
+    "Log daily mood and express feelings through open-ended journaling.",
+    "Identify hidden stress triggers and emotional patterns from journaling.",
+    "Obtain real-time, personalized wellness support and coping strategies grounded in validated clinical frameworks.",
+    "Ensure safety with a robust crisis bypass system."
+  ]
+  mvp_scope (must-have): [
+    "Low-Friction Mood & Journal Entry: Emoji-based mood logging and open-ended text input.",
+    "GenAI Trigger & Theme Extraction: Parse text to extract dominant emotions and specific prep triggers.",
+    "Empathetic Chat Companion: Interactive chatbot grounded in WHO/MoHFW guidelines via RAG.",
+    "Safety & Crisis Bypass: Keyword intercept that displays red warning card with Indian helpline numbers (Kiran, AASRA) and disables standard AI output.",
+    "Analytics Dashboard: 7-day mood tracker graph and stress triggers tag cloud/frequencies."
+  ]
+  out_of_scope (cut for time): [
+    "Peer forums or community boards.",
+    "Voice-to-text, audio analysis, or 3D avatars.",
+    "Direct routing to human counselors or schedule coordination.",
+    "Study planners or calendar sync tools.",
+    "Gamified store or reward mechanisms."
+  ]
+  acceptance_criteria: [
+    "AC1: Given a student submits a journal log, when it contains specific stress triggers, then the system must save the log and extract those triggers to update the analytics dashboard.",
+    "AC2: Given a student types a message indicating self-harm or severe crisis, when the system pre-scans it, then it must bypass the LLM, display a red card with emergency helpline numbers, and disable standard chat response.",
+    "AC3: Given a student asks for coping strategies for exam anxiety, when the chatbot responds, then it must ground its response in WHO/MoHFW wellness frameworks and include a grounding source citation."
+  ]
+  risks_assumptions: [
+    "Assumption: LLM APIs are online and fast enough for real-time interaction.",
+    "Risk: Accuracy of trigger extraction depends on student journal length and LLM parsing capability.",
+    "Risk: Safety filter must maintain 100% recall of critical keywords without false negatives."
+  ]
+  competitive_analysis: [
+    {
+      "name": "Wysa",
+      "url": "https://www.wysa.com",
+      "strengths": "Clinical CBT/DBT backing, complete anonymity, friendly avatar.",
+      "weaknesses": "Can feel repetitive, paywalled core resources.",
+      "pricing": "$74.99/year Premium, $19.99/session coaching.",
+      "ux_patterns": "Empathy-first conversational UI, micro-interactions with emojis."
+    },
+    {
+      "name": "Replika",
+      "url": "https://replika.com",
+      "strengths": "Deep personalization, long-term memory, interactive avatars.",
+      "weaknesses": "Emotional dependency risks, heavy paywalls.",
+      "pricing": "$79.99/year Pro.",
+      "ux_patterns": "User-editable memory logs, companion diary."
+    },
+    {
+      "name": "Woebot",
+      "url": "https://woebothealth.com",
+      "strengths": "Rigorous clinical validation, structured CBT sessions.",
+      "weaknesses": "No direct-to-consumer access, rigid decision trees.",
+      "pricing": "Enterprise B2B only.",
+      "ux_patterns": "Structured daily check-ins, quick-reply options."
+    },
+    {
+      "name": "Youper",
+      "url": "https://www.youper.ai",
+      "strengths": "Validated clinical metrics (GAD-7, PHQ-9), data-driven dashboards.",
+      "weaknesses": "No long-term free tier, rigid decision-tree chatbot.",
+      "pricing": "$69.99/year.",
+      "ux_patterns": "Diagnostic flow, visual progress graphs."
+    },
+    {
+      "name": "Headspace",
+      "url": "https://www.headspace.com",
+      "strengths": "Abstract vector illustrations, massive audio library.",
+      "weaknesses": "UI clutter, not suitable for high-risk clinical cases.",
+      "pricing": "$12.99/month, Student discounts.",
+      "ux_patterns": "Streak-tracking, clean audio player."
+    },
+    {
+      "name": "Calm",
+      "url": "https://calm.com",
+      "strengths": "Beautiful nature UI, premium audio design.",
+      "weaknesses": "No interactive chat, expensive paywall.",
+      "pricing": "$69.99/year.",
+      "ux_patterns": "Ambient landing ('Take a deep breath') with soft audio."
+    }
+  ]
+  design_inspiration: [
+    "Anonymity by default to lower friction.",
+    "Friendly, calm color palette with vector mascots/graphics.",
+    "Streak tracking and clear, readable charts to showcase emotional progress.",
+    "Empathetic chatbot with clean layout, bubbles, and instant helpline cards for crisis triggers."
+  ]
+</SPEC>

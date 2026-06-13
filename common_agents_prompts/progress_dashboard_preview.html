@@ -1,0 +1,97 @@
+<!doctype html>
+<!-- PREVIEW of the live build dashboard (embedded sample data; double-click to view).
+     The real one the Dashboard agent builds fetches /_agents/state.json live every 2s. -->
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build Progress - PREVIEW</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body{background:radial-gradient(1200px 600px at 20% -10%, #16204a 0%, #0b1020 60%);min-height:100vh}
+    .glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:1rem}
+    .agent-working{box-shadow:0 0 0 2px rgba(13,110,253,.45);animation:pulse 1.4s infinite}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(13,110,253,.4)}70%{box-shadow:0 0 0 12px rgba(13,110,253,0)}100%{box-shadow:0 0 0 0 rgba(13,110,253,0)}}
+    .feed{max-height:320px;overflow:auto}.mono{font-family:ui-monospace,Menlo,monospace}
+  </style>
+</head>
+<body class="text-light">
+<div class="container-fluid py-4" style="max-width:1400px">
+  <div class="badge text-bg-warning mb-2">PREVIEW (sample data)</div>
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <div><h3 class="mb-0"><i class="bi bi-cpu-fill text-info"></i> <span id="product"></span></h3>
+      <div class="text-secondary" id="problem"></div></div>
+    <div class="text-end"><div class="display-5 mono fw-bold" id="timer">--:--</div>
+      <div class="small text-secondary">remaining · <span id="phase" class="badge text-bg-primary">-</span></div></div>
+  </div>
+  <div class="progress mb-4" style="height:.5rem"><div id="overall" class="progress-bar bg-success" style="width:0%"></div></div>
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="glass p-3"><div class="text-secondary small">ACCEPTANCE CRITERIA</div><div class="h4 mb-1" id="acc">0/0</div><div class="progress" style="height:.4rem"><div id="accbar" class="progress-bar bg-info" style="width:0%"></div></div></div></div>
+    <div class="col-6 col-md-3"><div class="glass p-3"><div class="text-secondary small">CRITICAL BUGS</div><div class="h3 mb-0"><span id="bugs" class="badge text-bg-success">0</span></div></div></div>
+    <div class="col-6 col-md-3"><div class="glass p-3"><div class="text-secondary small">SHIP DECISION</div><div class="h4 mb-0"><span id="ship" class="badge text-bg-secondary">pending</span></div></div></div>
+    <div class="col-6 col-md-3"><div class="glass p-3"><div class="text-secondary small">LIVE DEMO</div><a id="demo" class="btn btn-sm btn-outline-info disabled mt-1" target="_blank">not yet</a></div></div>
+  </div>
+  <h6 class="text-secondary text-uppercase small mb-2">The AI team</h6>
+  <div class="row g-3 mb-4" id="agents"></div>
+  <div class="row g-3">
+    <div class="col-lg-7"><div class="glass p-3"><h6 class="text-secondary text-uppercase small"><i class="bi bi-activity"></i> Live activity</h6><div class="feed" id="feed"></div></div></div>
+    <div class="col-lg-5"><div class="glass p-3"><h6 class="text-secondary text-uppercase small"><i class="bi bi-git"></i> Commits</h6><div class="feed mono" id="commits"></div></div></div>
+  </div>
+  <div class="text-secondary small mt-3">auto-refresh 2s · last update <span id="updated">-</span></div>
+</div>
+<script>
+const now=Date.now(), ago=m=>new Date(now-m*60000).toISOString();
+// embedded SAMPLE state (the real dashboard fetches state.json instead)
+const s={
+  product_name:"QueueZero - smart clinic check-in",
+  problem_summary:"Cut patient waiting-room time with QR check-in + live queue + SMS 'you're next'.",
+  deadline_at:new Date(now+128*60000).toISOString(), phase:"QA + iterate",
+  demo_url:"http://localhost:3000", acceptance:{passing:5,total:7}, critical_bugs:1, ship_decision:"iterating",
+  agents:[
+    {name:"Orchestrator",status:"working",task:"loop iteration 2 - routing change-list",updated_at:ago(0)},
+    {name:"Research",status:"done",task:"SPEC + 7 acceptance criteria",updated_at:ago(95)},
+    {name:"Architect",status:"done",task:"Next.js + Prisma/SQLite; API frozen",updated_at:ago(80)},
+    {name:"Database",status:"done",task:"4 tables, seeded 60 rows",updated_at:ago(70)},
+    {name:"Backend",status:"working",task:"fix /api/queue/next ordering bug",updated_at:ago(1)},
+    {name:"Frontend",status:"done",task:"check-in + live queue board",updated_at:ago(12)},
+    {name:"QA",status:"done",task:"5/7 pass, 1 critical bug filed",updated_at:ago(3)},
+    {name:"Reviewer",status:"working",task:"prioritising change-list vs 2h left",updated_at:ago(0)},
+    {name:"Docs/Pitch",status:"idle",task:"",updated_at:ago(40)},
+    {name:"Git/DevOps",status:"done",task:"pushed feat: live queue",updated_at:ago(8)},
+    {name:"Dashboard",status:"done",task:"live",updated_at:ago(85)}
+  ],
+  activity:[
+    {ts:ago(0),agent:"reviewer",msg:"change-list: fix queue ordering (10m), add SMS retry (15m)"},
+    {ts:ago(1),agent:"backend",msg:"reproducing /api/queue/next off-by-one"},
+    {ts:ago(3),agent:"qa",msg:"AC6 FAIL - 'next patient' skips walk-ins"},
+    {ts:ago(8),agent:"git",msg:"feat: live queue board pushed (a1b2c3d)"},
+    {ts:ago(12),agent:"frontend",msg:"queue board wired to real /api/queue"},
+    {ts:ago(30),agent:"backend",msg:"POST /api/checkin live"},
+    {ts:ago(70),agent:"database",msg:"seeded 60 rows across 4 tables"}
+  ],
+  commits:[
+    {sha:"a1b2c3d",msg:"feat: live queue board",ts:ago(8)},
+    {sha:"9f0e1d2",msg:"feat: QR check-in flow",ts:ago(35)},
+    {sha:"4c5b6a7",msg:"chore: scaffold + prisma schema",ts:ago(78)}
+  ]
+};
+const ST={idle:["secondary","bi-pause-circle"],working:["primary","bi-gear-fill"],done:["success","bi-check-circle-fill"],blocked:["danger","bi-exclamation-triangle-fill"]};
+const esc=x=>(x??"").toString().replace(/[<>&]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]));
+const rel=t=>{if(!t)return"";const x=Math.round((Date.now()-new Date(t))/1000);return x<60?x+"s ago":Math.round(x/60)+"m ago";};
+function tick(){
+  product.textContent=s.product_name; problem.textContent=s.problem_summary; phase.textContent=s.phase;
+  let ms=new Date(s.deadline_at)-Date.now(),m=Math.max(0,Math.floor(ms/60000)),ss=Math.max(0,Math.floor(ms/1000)%60);
+  timer.textContent=(m<10?"0":"")+m+":"+(ss<10?"0":"")+ss; timer.className="display-5 mono fw-bold "+(ms<15*60000?"text-danger":ms<45*60000?"text-warning":"text-light");
+  let a=s.acceptance,pct=a.total?Math.round(100*a.passing/a.total):0; acc.textContent=a.passing+"/"+a.total;
+  accbar.style.width=pct+"%"; overall.style.width=pct+"%";
+  bugs.textContent=s.critical_bugs; bugs.className="badge text-bg-"+(s.critical_bugs>0?"danger":"success");
+  ship.textContent=s.ship_decision; ship.className="badge text-bg-"+({ship:"success",iterating:"warning",pending:"secondary"}[s.ship_decision]||"secondary");
+  if(s.demo_url){demo.href=s.demo_url;demo.textContent="Open demo ↗";demo.classList.remove("disabled");}
+  agents.innerHTML=s.agents.map(g=>{let[c,ic]=ST[g.status]||ST.idle;return '<div class="col-6 col-md-4 col-xl-3"><div class="glass p-3 h-100 '+(g.status=="working"?"agent-working":"")+'"><div class="d-flex justify-content-between align-items-center"><strong>'+esc(g.name)+'</strong><span class="badge text-bg-'+c+'"><i class="bi '+ic+'"></i> '+esc(g.status)+'</span></div><div class="small text-secondary mt-2">'+(esc(g.task)||"&nbsp;")+'</div><div class="small text-secondary mt-2">'+rel(g.updated_at)+'</div></div></div>';}).join("");
+  feed.innerHTML=s.activity.map(e=>'<div class="border-bottom border-secondary-subtle py-1 small"><span class="badge text-bg-dark me-1">'+esc(e.agent)+'</span>'+esc(e.msg)+' <span class="text-secondary">· '+rel(e.ts)+'</span></div>').join("");
+  commits.innerHTML=s.commits.map(c=>'<div class="py-1 small"><span class="text-info">'+esc(c.sha)+'</span> '+esc(c.msg)+' <span class="text-secondary">· '+rel(c.ts)+'</span></div>').join("");
+  updated.textContent=new Date().toLocaleTimeString();
+}
+tick(); setInterval(tick,1000);
+</script>
+</body></html>

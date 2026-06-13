@@ -1,0 +1,32 @@
+{
+  "product_name": "Student Mental Wellness Tracker",
+  "problem_summary": "GenAI wellness companion for high-stakes exam prep stress relief, mood monitoring, trigger tracking, and crisis safety bypass.",
+  "started_at": "2026-06-13T06:44:56Z",
+  "deadline_at": "2026-06-13T09:44:56Z",
+  "phase": "Design + Scaffold",
+  "demo_url": null,
+  "acceptance": {"passing": 0, "total": 3},
+  "critical_bugs": 0,
+  "ship_decision": "pending",
+  "agents": [
+    {"id":"orchestrator","name":"Orchestrator","status":"working","task":"scaffolding Next.js & DB setup","updated_at":"2026-06-13T06:55:00Z"},
+    {"id":"research","name":"Research","status":"done","task":"produced SPEC with competitive analysis","updated_at":"2026-06-13T06:49:33Z"},
+    {"id":"architect","name":"Architect","status":"done","task":"produced PLAN and API_CONTRACT","updated_at":"2026-06-13T06:54:00Z"},
+    {"id":"database","name":"Database","status":"idle","task":"","updated_at":null},
+    {"id":"backend","name":"Backend","status":"idle","task":"","updated_at":null},
+    {"id":"frontend","name":"Frontend","status":"idle","task":"","updated_at":null},
+    {"id":"qa","name":"QA","status":"idle","task":"","updated_at":null},
+    {"id":"reviewer","name":"Reviewer","status":"idle","task":"","updated_at":null},
+    {"id":"docs","name":"Docs/Pitch","status":"idle","task":"","updated_at":null},
+    {"id":"git","name":"Git/DevOps","status":"idle","task":"","updated_at":null},
+    {"id":"dashboard","name":"Dashboard","status":"done","task":"live","updated_at":"2026-06-13T06:55:00Z"}
+  ],
+  "activity": [
+    {"agent":"Orchestrator","msg":"Booted team and verified 4/4 MCP servers responding.","ts":"2026-06-13T06:47:20Z"},
+    {"agent":"Research","msg":"Generated SPEC with 6 competitor deep-dives.","ts":"2026-06-13T06:49:30Z"},
+    {"agent":"Orchestrator","msg":"Decision received: Sticking to Next.js + Supabase; direct Groq LLM architecture with strict wellness limits.","ts":"2026-06-13T06:52:00Z"},
+    {"agent":"Architect","msg":"Generated PLAN (DDL, folder layout) & API_CONTRACT (/api/logs, /api/chat).","ts":"2026-06-13T06:54:00Z"},
+    {"agent":"Orchestrator","msg":"Scaffolding dashboard.html and state.json. Starting local progress dashboard server.","ts":"2026-06-13T06:55:00Z"}
+  ],
+  "commits": []
+}
