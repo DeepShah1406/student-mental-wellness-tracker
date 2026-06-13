@@ -103,7 +103,7 @@ export default function LoginPage() {
         {/* Title */}
         <div className="text-center space-y-2">
           <span className="text-4xl block animate-pulse">🛡️</span>
-          <h2 className="text-2xl font-extrabold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+          <h2 className="text-2xl font-extrabold bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
             {isLogin ? "Access MindGuard" : "Join MindGuard"}
           </h2>
           <p className="text-xs text-slate-400">

@@ -376,7 +376,7 @@ export default function RelaxCenter() {
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/5 text-purple-400 text-xs font-semibold">
             🧘‍♀️ Relax & Focus Space
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
             Relax Center
           </h1>
           <p className="text-xs text-slate-400">
@@ -418,7 +418,7 @@ export default function RelaxCenter() {
               </svg>
               {/* Counter Display */}
               <div className="text-center z-10">
-                <span className="text-4xl font-extrabold tracking-wider font-mono text-white block">
+                <span className="text-4xl font-extrabold tracking-wider font-mono text-slate-100 block">
                   {formatTime(timeLeft)}
                 </span>
                 <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">

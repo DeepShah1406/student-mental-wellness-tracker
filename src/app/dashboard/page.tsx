@@ -132,7 +132,7 @@ export default function DashboardPage() {
       {/* Page Title */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
             Your Wellness Dashboard
           </h1>
           <p className="text-slate-400 text-sm mt-1">

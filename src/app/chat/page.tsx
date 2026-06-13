@@ -103,7 +103,7 @@ export default function ChatPage() {
     <div className="flex-1 max-w-4xl mx-auto w-full px-4 py-8 flex flex-col h-[calc(100vh-8rem)] bg-slate-950">
       {/* Page Header */}
       <div className="mb-4 flex-none">
-        <h1 className="text-2xl font-extrabold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+        <h1 className="text-2xl font-extrabold bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
           Empathetic AI Companion
         </h1>
         <p className="text-slate-400 text-xs mt-0.5">

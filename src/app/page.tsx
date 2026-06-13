@@ -61,7 +61,7 @@ export default function Home() {
         </div>
 
         {/* Hero title */}
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 bg-gradient-to-r from-white via-slate-100 to-indigo-200 bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 bg-gradient-to-r from-slate-100 via-slate-300 to-indigo-300 bg-clip-text text-transparent">
           Your Companion Through the <br />
           <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             Aspirant Journey

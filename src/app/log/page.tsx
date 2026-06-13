@@ -70,7 +70,7 @@ export default function LogPage() {
     <div className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
       <Confetti ref={confettiRef} />
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-extrabold bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
           Write Your Daily Log
         </h1>
         <p className="text-slate-400 text-sm mt-1">
@@ -147,7 +147,7 @@ export default function LogPage() {
             <div className="flex items-center gap-3 pb-4 border-b border-slate-800/60">
               <span className="text-4xl">🧬</span>
               <div>
-                <h2 className="text-xl font-bold text-white">AI Wellness Analysis</h2>
+                <h2 className="text-xl font-bold text-slate-100">AI Wellness Analysis</h2>
                 <p className="text-xs text-slate-400">Journal processed and triggers cataloged successfully.</p>
               </div>
             </div>
@@ -179,7 +179,7 @@ export default function LogPage() {
           {/* Calming Coping Exercise (Wow Moment) */}
           <div className="p-8 rounded-2xl border border-indigo-500/20 bg-gradient-to-r from-indigo-950/40 via-slate-900/30 to-purple-950/30 backdrop-blur-sm space-y-4">
             <h3 className="text-indigo-400 text-xs font-bold uppercase tracking-wider">Recommended Calming Exercise</h3>
-            <h2 className="text-xl font-extrabold text-white">Box Breathing Technique</h2>
+            <h2 className="text-xl font-extrabold text-slate-100">Box Breathing Technique</h2>
             <p className="text-sm text-slate-300 leading-relaxed">
               When dealing with high study pressure and exam stress, the heart rate rises. Practicing box breathing sends a biological signal to your brain to restore calm.
             </p>
@@ -212,7 +212,7 @@ export default function LogPage() {
           <div className="flex flex-col sm:flex-row gap-4 pt-2">
             <Link
               href="/dashboard"
-              className="flex-1 text-center bg-slate-900 hover:bg-slate-850 border border-slate-800 text-white font-bold py-3.5 rounded-xl transition-all text-sm"
+              className="flex-1 text-center bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-100 font-bold py-3.5 rounded-xl transition-all text-sm"
             >
               📊 View Dashboard Trends
             </Link>
