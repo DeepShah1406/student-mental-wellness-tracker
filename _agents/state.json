@@ -6,6 +6,15 @@
   "phase": "Docs + Pitch",
   "demo_url": "http://localhost:3000",
   "acceptance": {"passing": 6, "total": 6},
+  "baseline_score": {
+    "overall": 93.59,
+    "code_quality": 86,
+    "security": 98,
+    "efficiency": 100,
+    "testing": 93,
+    "accessibility": 96,
+    "problem_alignment": 94
+  },
   "critical_bugs": 0,
   "ship_decision": "ship",
   "agents": [
@@ -43,7 +52,8 @@
     {"agent":"Frontend","msg":"Added secure signup & login portal with local storage session persistence.","ts":"2026-06-13T07:55:00Z"},
     {"agent":"QA","msg":"Successfully verified all 6 acceptance criteria and updated functional tests.","ts":"2026-06-13T07:56:00Z"},
     {"agent":"Orchestrator","msg":"Increased acceptance criteria from 3 to 6 on agent dashboard.","ts":"2026-06-13T07:56:30Z"},
-    {"agent":"Git/DevOps","msg":"Committed and pushed version 0.0.3 with auth & updated dashboard criteria.","ts":"2026-06-13T07:58:00Z"}
+    {"agent":"Git/DevOps","msg":"Committed and pushed version 0.0.3 with auth & updated dashboard criteria.","ts":"2026-06-13T07:58:00Z"},
+    {"agent":"QA","msg":"Recorded external AI evaluation score of 93.59/100 and saved version 0.0.2 baseline.","ts":"2026-06-13T08:05:00Z"}
   ],
   "commits": [
     {"sha":"4fe2a33","msg":"feat: add secure signup & login portal and increase dashboard criteria to 6","ts":"2026-06-13T07:58:00Z"},
